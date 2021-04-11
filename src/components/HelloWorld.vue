@@ -1,65 +1,101 @@
 <template>
-  <h1>{{ msg }}</h1>
-
-  <p>
-    Recommended IDE setup:
-    <a href="https://code.visualstudio.com/" target="_blank">VSCode</a>
-    +
-    <a
-      href="https://marketplace.visualstudio.com/items?itemName=octref.vetur"
-      target="_blank"
-    >Vetur</a>
-    or
-    <a href="https://github.com/johnsoncodehk/volar" target="_blank">Volar</a>
-    (if using
-    <code>&lt;script setup&gt;</code>)
-  </p>
-
-  <p>See <code>README.md</code> for more information.</p>
-
-  <p>
-    <a href="https://vitejs.dev/guide/features.html" target="_blank">Vite Docs</a> |
-    <a href="https://v3.vuejs.org/" target="_blank">Vue 3 Docs</a>
-  </p>
-
-  <button @click="count++">count is: {{ count }}</button>
-  <p>
-    Edit
-    <code>components/HelloWorld.vue</code> to test hot module replacement.
-  </p>
+  <div id="drum-machine">
+    <div id="display">{{ describeText }}</div>
+    <div
+      v-for="item in bankData"
+      :key="item.keyCode"
+      class="drum-pad"
+      :id="item.id"
+      @click="playSound(item.url, item.id)"
+    >
+      {{ item.keyTrigger }}
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
-import { ref, defineComponent } from 'vue'
+import { defineComponent, reactive, ref } from "vue";
 export default defineComponent({
-  name: 'HelloWorld',
-  props: {
-    msg: {
-      type: String,
-      required: true
-    }
-  },
+  name: "HelloWorld",
   setup: () => {
-    const count = ref(0)
-    return { count }
-  }
-})
+    const bankData = reactive([
+      {
+        keyCode: 81,
+        keyTrigger: "Q",
+        id: "Heater-1",
+        url: "https://s3.amazonaws.com/freecodecamp/drums/Heater-1.mp3",
+      },
+      {
+        keyCode: 87,
+        keyTrigger: "W",
+        id: "Heater-2",
+        url: "https://s3.amazonaws.com/freecodecamp/drums/Heater-2.mp3",
+      },
+      {
+        keyCode: 69,
+        keyTrigger: "E",
+        id: "Heater-3",
+        url: "https://s3.amazonaws.com/freecodecamp/drums/Heater-3.mp3",
+      },
+      {
+        keyCode: 65,
+        keyTrigger: "A",
+        id: "Heater-4",
+        url: "https://s3.amazonaws.com/freecodecamp/drums/Heater-4_1.mp3",
+      },
+      {
+        keyCode: 83,
+        keyTrigger: "S",
+        id: "Clap",
+        url: "https://s3.amazonaws.com/freecodecamp/drums/Heater-6.mp3",
+      },
+      {
+        keyCode: 68,
+        keyTrigger: "D",
+        id: "Open-HH",
+        url: "https://s3.amazonaws.com/freecodecamp/drums/Dsc_Oh.mp3",
+      },
+      {
+        keyCode: 90,
+        keyTrigger: "Z",
+        id: "Kick-n'-Hat",
+        url: "https://s3.amazonaws.com/freecodecamp/drums/Kick_n_Hat.mp3",
+      },
+      {
+        keyCode: 88,
+        keyTrigger: "X",
+        id: "Kick",
+        url: "https://s3.amazonaws.com/freecodecamp/drums/RP4_KICK_1.mp3",
+      },
+      {
+        keyCode: 67,
+        keyTrigger: "C",
+        id: "Closed-HH",
+        url: "https://s3.amazonaws.com/freecodecamp/drums/Cev_H2.mp3",
+      },
+    ]);
+    const describeText = ref("");
+
+    const playSound = (soundUrl: string, text: string) => {
+      if (soundUrl) {
+        describeText.value = text;
+        var audio = new Audio(soundUrl);
+        audio.play();
+      }
+    };
+
+    document.addEventListener("keypress", async (e) => {
+      bankData.forEach((el) => {
+        if (e.key.toUpperCase() === el.keyTrigger) {
+          playSound(el.url, el.id);
+        }
+      });
+    });
+
+    return { bankData, describeText, playSound };
+  },
+});
 </script>
 
 <style scoped>
-a {
-  color: #42b983;
-}
-
-label {
-  margin: 0 0.5em;
-  font-weight: bold;
-}
-
-code {
-  background-color: #eee;
-  padding: 2px 4px;
-  border-radius: 4px;
-  color: #304455;
-}
 </style>

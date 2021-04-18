@@ -15,7 +15,14 @@ export default defineComponent({
 </script>
 
 <style>
+body {
+  margin: 0px;
+}
 #app {
-  margin-top: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: Microsoft JhengHei;
 }
 </style>

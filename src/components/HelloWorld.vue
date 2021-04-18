@@ -1,14 +1,18 @@
 <template>
   <div id="drum-machine">
-    <div id="display">{{ describeText }}</div>
-    <div
-      v-for="item in bankData"
-      :key="item.keyCode"
-      class="drum-pad"
-      :id="item.id"
-      @click="playSound(item.url, item.id)"
-    >
-      {{ item.keyTrigger }}
+    <h1 id="title">Drum Machine</h1>
+    <h2 id="display">{{ describeText }}</h2>
+    <div id="bracket">
+      <div
+        v-for="(item, index) in bankData"
+        :key="item.keyCode"
+        class="drum-pad"
+        :class="{ active: isActive[index] }"
+        :id="item.id"
+        @click="playSound(item.url, item.id, index)"
+      >
+        {{ item.keyTrigger }}
+      </div>
     </div>
   </div>
 </template>
@@ -74,28 +78,65 @@ export default defineComponent({
         url: "https://s3.amazonaws.com/freecodecamp/drums/Cev_H2.mp3",
       },
     ]);
-    const describeText = ref("");
+    const describeText = ref("Drum Name");
+    const isActive = reactive([
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+    ]);
 
-    const playSound = (soundUrl: string, text: string) => {
+    const playSound = (soundUrl: string, text: string, index: number) => {
       if (soundUrl) {
+        isActive[index] = true;
         describeText.value = text;
-        var audio = new Audio(soundUrl);
+        const audio = new Audio(soundUrl);
+        audio.addEventListener("ended", function () {
+          isActive[index] = false;
+        });
         audio.play();
       }
     };
 
     document.addEventListener("keypress", async (e) => {
-      bankData.forEach((el) => {
+      bankData.forEach((el, index) => {
         if (e.key.toUpperCase() === el.keyTrigger) {
-          playSound(el.url, el.id);
+          playSound(el.url, el.id, index);
         }
       });
     });
 
-    return { bankData, describeText, playSound };
+    return { bankData, describeText, playSound, isActive };
   },
 });
 </script>
 
 <style scoped>
+#title {
+  text-align: center;
+}
+#display {
+  text-align: center;
+}
+#bracket {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-template-rows: auto auto auto;
+  grid-gap: 10px;
+}
+.drum-pad {
+  background: #abc;
+  text-align: center;
+  width: 150px;
+  line-height: 150px;
+  cursor: pointer;
+}
+.active {
+  background: #789;
+}
 </style>
